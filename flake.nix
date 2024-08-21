@@ -1,5 +1,5 @@
 {
-  description = "Example Darwin system flake";
+  description = "Work Mac Flake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -15,41 +15,62 @@
       environment.systemPackages = with pkgs; [
         neovim
         tldr
-        zoxide
+        tmux
         fastfetch
-        kitty
-	google-chrome
-	raycast
-	htop
-	btop
-	ripgrep
-	fd
-	fzf
-	ranger
-       ];
+        ranger
+        thefuck
+        unzip
+        zoxide
+      ];
 
-     homebrew = {
-       enable = true;
-       onActivation = {
-         cleanup = "uninstall";
-	 autoUpdate = true;
-	 upgrade = true;
-       };
-       taps = [
-         "homebrew/bundle"
-         "homebrew/cask"
-         "homebrew/core"
-	 "nikitabobko/tap"
-       ];
-       brews = [];
-       casks = [ 
-         "iterm2"
-	 "firefox"
-	 "bitwarden"
-	 "aerospace"
-       ];
+      homebrew = {
+          enable = true;
+          onActivation = {
+            cleanup = "uninstall";
+            autoUpdate = true;
+            upgrade = true;
+          };
+          taps = [ 
+            "koekeishiya/formulae" 
 
-       caskArgs.no_quarantine = true;
+          ];
+          brews = [ 
+            "yabai" 
+            "skhd"
+            "fzf"
+            ];
+          casks = [
+            "microsoft-edge"
+            "1password"
+            "1password-cli"
+            "bartender"
+            "bitwarden"
+            "chromium"
+            "crystalfetch"
+            "disk-inventory-x"
+            "displaylink"
+            "firefox"
+            "firefox@developer-edition"
+            "istat-menus"
+            "iterm2"
+            "kitty"
+            "jiggler"
+            "mac-mouse-fix"
+            "microsoft-office"
+            "microsoft-remote-desktop"
+            "notion"
+            "raycast"
+            "slack"
+            "splashtop-business"
+            "swift-quit"
+            "topnotch"
+            "tunnelblick"
+            "utm"
+            "zoom"
+            "zenmap"
+            "yt-music"
+            ];
+        caskArgs.no_quarantine = true;
 
      };
 
@@ -157,11 +178,11 @@
   {
     # Build darwin flake using:
     # $ darwin-rebuild build --flake .#crapple
-    darwinConfigurations."crapple" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations."MacBook-Air-3" = nix-darwin.lib.darwinSystem {
       modules = [ configuration ];
     };
 
     # Expose the package set, including overlays, for convenience.
-    darwinPackages = self.darwinConfigurations."crapple".pkgs;
+    darwinPackages = self.darwinConfigurations."MacBook-Air-3".pkgs;
   };
 }
