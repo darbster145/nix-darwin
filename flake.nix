@@ -5,9 +5,25 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    # Optional: Declarative tap management
+    homebrew-core = {
+      url = "github:homebrew/homebrew-core";
+      flake = false;
+    };
+    homebrew-cask = {
+      url = "github:homebrew/homebrew-cask";
+      flake = false;
+    };
+    homebrew-bundle = {
+      url = "github:homebrew/homebrew-bundle";
+      flake = false;
+    };
   };
 
-  outputs = inputs@{ self, nix-darwin,  ... }:
+  outputs = inputs@{ self, nix-darwin, nix-homebrew, homebrew-core, homebrew-cask, homebrew-bundle, ... }:
   let
     configuration = { pkgs, ... }: {
       # List packages installed in system profile. To search by name, run:
@@ -18,40 +34,34 @@
         zoxide
         fastfetch
         kitty
-	google-chrome
-	raycast
-	htop
-	btop
-	ripgrep
-	fd
-	fzf
-	ranger
-       ];
+        google-chrome
+        raycast
+        htop
+        btop
+        ripgrep
+        fd
+        fzf
+        ranger
+      ];
 
-     homebrew = {
-       enable = true;
-       onActivation = {
-         cleanup = "uninstall";
-	 autoUpdate = true;
-	 upgrade = true;
-       };
-       taps = [
-         "homebrew/bundle"
-         "homebrew/cask"
-         "homebrew/core"
-	 "nikitabobko/tap"
-       ];
-       brews = [];
-       casks = [ 
-         "iterm2"
-	 "firefox"
-	 "bitwarden"
-	 "aerospace"
-       ];
+      homebrew = {
+        enable = true;
+        onActivation = {
+          cleanup = "uninstall";
+          autoUpdate = true;
+          upgrade = true;
+        };
 
-       caskArgs.no_quarantine = true;
+        brews = [];
 
-     };
+        casks = [
+          "iterm2"
+          "firefox"
+          "bitwarden"
+        ];
+
+        caskArgs.no_quarantine = true;
+      };
 
       # Auto upgrade nix package and the daemon service.
       services.nix-daemon.enable = true;
@@ -83,66 +93,67 @@
       # Disable starup chime
       system.startup.chime = false;
 
+      system.activationScripts.postUserActivation.text = ''/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u '';
+
       system.defaults = {
 
         # dock settings
-	dock = {
-	  autohide = true;
-	  autohide-delay = 0.24;
-	  mru-spaces = false;
-	  magnification = true;
-	  mineffect = "scale";
-	  minimize-to-application = true;
-	  persistent-others = [
-	    "~/Applications"
-	  ];
-	  # Show only open applications in the Dock.
+        dock = {
+          autohide = true;
+          autohide-delay = 0.24;
+          mru-spaces = false;
+          magnification = true;
+          mineffect = "scale";
+          minimize-to-application = true;
+          persistent-others = [
+            "~/Applications"
+          ];
+          # Show only open applications in the Dock.
           # static-only = true;
-	  
-	};
 
-	# Clock Config
-	menuExtraClock = {
-	  Show24Hour = true;
-	  ShowSeconds = true;
         };
 
-	# finder settings
-	finder = {
-	  AppleShowAllExtensions = true;
-	  AppleShowAllFiles = true;
-          FXPreferredViewStyle = "Nlsv";
-	  FXDefaultSearchScope = "SCcf";
-	  QuitMenuItem = true;
-	  ShowPathbar = true;
-	  ShowStatusBar = true;
-	  _FXShowPosixPathInTitle = true;
-	};
+        # Clock Config
+        menuExtraClock = {
+          Show24Hour = true;
+          ShowSeconds = true;
+        };
 
+        # finder settings
+        finder = {
+          AppleShowAllExtensions = true;
+          AppleShowAllFiles = true;
+          FXPreferredViewStyle = "Nlsv";
+          FXDefaultSearchScope = "SCcf";
+          QuitMenuItem = true;
+          ShowPathbar = true;
+          ShowStatusBar = true;
+          _FXShowPosixPathInTitle = true;
+        };
 
         loginwindow.LoginwindowText = "sugundezz";
-        
-	screencapture.location = "~/Pictures/screenshots";
-        
-	screensaver.askForPasswordDelay = 10;
 
-	SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;
+        screencapture.location = "~/Pictures/screenshots";
 
-	spaces.spans-displays = true;
-	
-	# Trackpad Settings
-	trackpad = {
-	  ActuationStrength = 1;
-	  Clicking = true;
-	  # Tap to Drag
-	  Dragging = false;
-	};
-	  
-	NSGlobalDomain = {
-	  AppleInterfaceStyle = "Dark";
-	  "com.apple.sound.beep.volume" = 1.0;
-	  NSScrollAnimationEnabled = true;
-	  "com.apple.swipescrolldirection" = true;
+        screensaver.askForPasswordDelay = 10;
+
+        SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;
+
+        spaces.spans-displays = false;
+
+        # Trackpad Settings
+        trackpad = {
+          ActuationStrength = 1;
+          Clicking = true;
+          # Tap to Drag
+          Dragging = false;
+        };
+
+        NSGlobalDomain = {
+          AppleInterfaceStyle = "Dark";
+          "com.apple.sound.beep.volume" = 1.0;
+          NSScrollAnimationEnabled = true;
+          "com.apple.swipescrolldirection" = true;
         };
       };
 
@@ -151,14 +162,37 @@
         enableKeyMapping = true;
         remapCapsLockToEscape = true;
       };
-   };
+
+      nix-homebrew = {
+        # Install Homebrew under the default prefix
+        enable = true;
+
+        # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
+        enableRosetta = true;
+
+        # User owning the Homebrew prefix
+        user = "yourname";
+
+        # Optional: Declarative tap management
+        taps = {
+          "homebrew/homebrew-core" = homebrew-core;
+          "homebrew/homebrew-cask" = homebrew-cask;
+          "homebrew/homebrew-bundle = homebrew-bundle;
+        };
+
+        # Optional: Enable fully-declarative tap management
+        #
+        # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
+        mutableTaps = false;
+      };
+    };
 
   in
   {
     # Build darwin flake using:
     # $ darwin-rebuild build --flake .#crapple
     darwinConfigurations."crapple" = nix-darwin.lib.darwinSystem {
-      modules = [ configuration ];
+      modules = [ configuration nix-homebrew.darwinModules.nix-homebrew ];
     };
 
     # Expose the package set, including overlays, for convenience.
