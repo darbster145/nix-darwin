@@ -21,58 +21,71 @@
         thefuck
         unzip
         zoxide
+        fzf
+        kitty
+        speedtest-cli
+        stow
+        nerdfonts
+        htop
+        btop
+        docker_27
+        docker-client
+        oh-my-posh
       ];
 
       homebrew = {
-          enable = true;
-          onActivation = {
-            cleanup = "uninstall";
-            autoUpdate = true;
-            upgrade = true;
-          };
-          taps = [ 
-            "koekeishiya/formulae" 
-
-          ];
-          brews = [ 
-            "yabai" 
-            "skhd"
-            "fzf"
-            ];
-          casks = [
-            "microsoft-edge"
-            "1password"
-            "1password-cli"
-            "bartender"
-            "bitwarden"
-            "chromium"
-            "crystalfetch"
-            "disk-inventory-x"
-            "displaylink"
-            "firefox"
-            "firefox@developer-edition"
-            "istat-menus"
-            "iterm2"
-            "kitty"
-            "jiggler"
-            "mac-mouse-fix"
-            "microsoft-office"
-            "microsoft-remote-desktop"
-            "notion"
-            "raycast"
-            "slack"
-            "splashtop-business"
-            "swift-quit"
-            "topnotch"
-            "tunnelblick"
-            "utm"
-            "zoom"
-            "zenmap"
-            "yt-music"
+        enable = true;
+        onActivation = {
+          cleanup = "uninstall";
+          autoUpdate = true;            
+          upgrade = true;
+        };
+        taps = [ 
+          "nikitabobko/homebrew-tap"      
+          "koekeishiya/formulae" 
+        ];
+        brews = [ 
+          "yabai" 
+          "skhd"
+        ];
+        casks = [
+          "microsoft-edge"
+          "1password"
+          "1password-cli"
+          "bartender"
+          "bitwarden"
+          "chromium"
+          "crystalfetch"
+          "disk-inventory-x"
+          "displaylink"
+          "firefox@developer-edition"
+          "istat-menus"
+          "jiggler"
+          "mac-mouse-fix"
+          "microsoft-office"
+          "microsoft-remote-desktop"
+          "notion"
+          "raycast"
+          "slack"
+          "splashtop-business"
+          "swift-quit"
+          "topnotch"
+          "tunnelblick"
+          "utm"
+          "zoom"
+          "zenmap"
+          "yt-music"
+          "shortcat"
+          "aerospace"
+          "betterdisplay"
             ];
         caskArgs.no_quarantine = true;
 
      };
+
+      fonts.packages = with pkgs; [
+        nerdfonts
+     ];
 
       # Auto upgrade nix package and the daemon service.
       services.nix-daemon.enable = true;
@@ -101,6 +114,9 @@
       # Touch ID auth for sudo
       security.pam.enableSudoTouchIdAuth = true;
 
+      # Force some settings to change that don't change until logout/in
+      system.activationScripts.postUserActivation.text = ''/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u '';
+
       # Disable starup chime
       system.startup.chime = false;
 
@@ -111,7 +127,7 @@
 	  autohide = true;
 	  autohide-delay = 0.24;
 	  mru-spaces = false;
-	  magnification = true;
+	  magnification = false;
 	  mineffect = "scale";
 	  minimize-to-application = true;
 	  persistent-others = [
@@ -149,7 +165,7 @@
 
 	SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;
 
-	spaces.spans-displays = true;
+	spaces.spans-displays = false;
 	
 	# Trackpad Settings
 	trackpad = {
