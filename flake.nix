@@ -5,9 +5,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    spacebar.url = "github:cmacrae/spacebar/v1.4.0";
   };
 
-  outputs = inputs@{ self, nix-darwin,  ... }:
+  outputs = inputs@{ self, nix-darwin, spacebar,  ... }:
   let
     configuration = { pkgs, ... }: {
       # List packages installed in system profile. To search by name, run:
@@ -22,15 +23,17 @@
         unzip
         zoxide
         fzf
-        kitty
+          #kitty
         speedtest-cli
         stow
-        nerdfonts
+        fira-code
         htop
         btop
         docker_27
         docker-client
         oh-my-posh
+        spacebar
+        powershell
       ];
 
       homebrew = {
@@ -40,14 +43,18 @@
           autoUpdate = true;            
           upgrade = true;
         };
+        caskArgs.no_quarantine = true;
+
         taps = [ 
           "nikitabobko/homebrew-tap"      
           "koekeishiya/formulae" 
         ];
+
         brews = [ 
           "yabai" 
           "skhd"
         ];
+
         casks = [
           "microsoft-edge"
           "1password"
@@ -78,13 +85,14 @@
           "shortcat"
           "aerospace"
           "betterdisplay"
-            ];
-        caskArgs.no_quarantine = true;
+            "kitty"
+        ];
 
      };
 
       fonts.packages = with pkgs; [
-        nerdfonts
+          fira-code
+          nerdfonts
      ];
 
       # Auto upgrade nix package and the daemon service.
