@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -6,7 +6,7 @@
     tldr
     zoxide
     fastfetch
-    google-chrome
+    #google-chrome
     raycast
     htop
     btop
@@ -156,10 +156,10 @@
     user = "brad";
 
     taps = {
-      "homebrew/homebrew-core" = homebrew-core;
-      "homebrew/homebrew-cask" = homebrew-cask;
-      "homebrew/homebrew-bundle" = homebrew-bundle;
-      "nikitabobko/homebrew-tap" = AeroSpace;
+      "homebrew/homebrew-core" = inputs.homebrew-core;
+      "homebrew/homebrew-cask" = inputs.homebrew-cask;
+      "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
+      "nikitabobko/homebrew-tap" = inputs.AeroSpace;
     };
 
     mutableTaps = false;
